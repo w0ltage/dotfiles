@@ -1,0 +1,88 @@
+#! /bin/sh
+
+# awesome must-read article about bspwm basics
+# https://dharmx.is-a.dev/bspwm-basics/
+
+# if you don't understand some bspc commands,
+# look them up in the bspc manual - `man bspc`
+
+# checks if external monitor is connected
+# if it is, then setup external monitor (VGA1) 
+# as second monitor right of primary monitor (LVDS1)
+if [[ $(xrandr -q | grep 'VGA1 connected') ]]; then
+  xrandr --output LVDS1 --primary --mode 1600x900 --rotate normal --output VGA1 --mode 1920x1200 --rotate normal --right-of LVDS1
+fi
+
+# initialize 8 desktops
+bspc monitor LVDS1 -d 1 2 3 4
+bspc monitor VGA1 -d 5 6 7 8
+
+# use predefined colors from file
+. "${HOME}/.config/bspwm/color"
+
+# execute autostart commands
+$HOME/.config/bspwm/autostart.sh
+
+# wmname is a nice utility to fix problems with JDK versions 
+# and other broken programs assuming a reparenting window manager for instance.
+# sets the window manager name to "LG3D"
+wmname LG3D &
+
+# SPACES contain a list of IDs (or names) that match desktops.
+SPACES=$(bspc query -D)
+
+# this loop used to overwrite previous settings
+for SPACE in $SPACES
+do
+  # sets the initial space between the windows,
+  # which determines their size
+  bspc config -d ${SPACE} window_gap      20
+
+  # space between windows and screen borders
+  # try some new values to understand what is this
+  bspc config -d ${SPACE} top_padding     0
+  bspc config -d ${SPACE} bottom_padding  0
+  bspc config -d ${SPACE} left_padding   0.5
+  bspc config -d ${SPACE} right_padding  -1
+done
+
+# focused window outline
+bspc config border_width         1
+bspc config focused_border_color "#575757"
+
+# sets outline color for window in specific state
+# bspc config normal_border_color "$color8"
+# bspc config active_border_color "$color7"
+# bspc config focused_border_color "$color6"
+# bspc config presel_feedback_color "$color0"
+
+# determines the layout of the windows when split in automatic mode
+bspc config automatic_scheme      alternate
+
+# 0.5 ration = 50% of available space is retained by the parent
+bspc config split_ratio           0.5
+
+# remove borders of tiled windows for the monocle desktop layout
+bspc config borderless_monocle    true
+
+# remove gaps of tiled windows for the monocle desktop layout
+bspc config gapless_monocle       false
+
+# set the desktop layout to monocle if there’s only one tiled window in the tree
+bspc config single_monocle        true
+
+# focus the window under the mouse cursor
+bspc config focus_follows_pointer true
+
+# load the first detected profile based on connected device
+/usr/bin/autorandr -c
+
+# from https://www.reddit.com/r/bspwm/comments/gvfreq/mouse_warping/
+# now mouse will warp to focuesed desktop
+# without it dmenu will popup on desktop where mouse was left
+bspc config pointer_follows_monitor true; \
+    bspc node -f "$direction"; \
+    bspc config pointer_follows_focus false
+
+# fix for lags when resizing
+# bspc config pointer_motion_interval 40

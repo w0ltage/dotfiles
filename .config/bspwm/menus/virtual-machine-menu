@@ -1,0 +1,4 @@
+#!/bin/sh
+
+choice=`virsh list --all --name | awk 'NF' | rofi -dmenu -i -p "Choose VM to start" -disable-history -tokenized`
+[ -z "$choice" ] && notify-send "VM menu" "No VM selected" || ((virsh start $choice && virt-manager --connect $LIBVIRT_DEFAULT_URI --show-domain-console "$choice" ) || notify-send "VM menu" "Could not start VM: $choice")

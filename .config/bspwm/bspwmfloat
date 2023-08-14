@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Open all windows in floating mode
+# "floating" means the window can be placed anywhere
+# on the desktop and resized at will
+bspc rule -a \* -o state=floating && $@
