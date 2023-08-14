@@ -1,0 +1,25 @@
+"query:Gitlab Bugs:tags # \"gitlab\"" meta
+"query:Improvement:tags # \"improve\"" meta
+"query:Music:tags # \"music\"" meta
+"query:Podcasts:tags # \"podcast\"" meta
+"query:Entertainment:tags # \"entertainment\"" meta
+
+"---GITLAB BUGS---"
+https://gitlab.com/gitlab-org/gitlab/-/issues.atom?first_page_size=20&label_name%5B%5D=bug%3A%3Avulnerability&sort=closed_at_desc&state=closed gitlab
+"---IMPROVEMENT---"
+https://www.youtube.com/feeds/videos.xml?channel_id=UCpvS3EykHW--l0ogUhMEjEw improve
+"---PODCASTS---"
+https://www.youtube.com/feeds/videos.xml?playlist_id=PLQQwOgZzcgt2uvJH6B824cBeqx-0OkHXA podcast
+https://www.youtube.com/feeds/videos.xml?playlist_id=PL8i3cg9-YErNqJ5yNQ6qwXUwEZ1gRvhxo podcast
+https://www.youtube.com/feeds/videos.xml?channel_id=UC6zbKG1pqq2do-_oa9QFliA podcast
+"---MUSIC---"
+https://www.youtube.com/feeds/videos.xml?channel_id=UCJu1l0I9gXyfCQWZmJSHuRg music 
+https://www.youtube.com/feeds/videos.xml?channel_id=UCGq4z6lqSNCfcfvjUKKaTLg music 
+https://www.youtube.com/feeds/videos.xml?channel_id=UCuT_fPxZVQMo9aH3nCQVKCw music 
+"---ENTERTAINMENT---"
+https://www.youtube.com/feeds/videos.xml?channel_id=UCdC0An4ZPNr_YiFiYoVbwaw entertainment
+https://www.youtube.com/feeds/videos.xml?channel_id=UCyIXz9bVeF9Obu2PzPLU1IQ entertainment
+https://www.youtube.com/feeds/videos.xml?channel_id=UCpgi6wIZv7c6TlAY-d1PMuw entertainment
+https://www.youtube.com/feeds/videos.xml?channel_id=UCUMwY9iS8oMyWDYIe6_RmoA entertainment
+https://www.youtube.com/feeds/videos.xml?channel_id=UCYLJN1XQvJMaGxVO_1I0NqQ entertainment
+https://www.youtube.com/feeds/videos.xml?channel_id=UCngn7SVujlvskHRvRKc1cTw entertainment
