@@ -131,8 +131,16 @@ super + {a,s,d,f}
   bspc node -t {pseudo_tiled,floating,tiled,fullscreen}
 
 # window floating/tiled toggle
+# alt + space
+#   bspc node -t "~"{floating,tiled}
+
+# set zero gap for all desktops
 alt + space
-  bspc node -t "~"{floating,tiled}
+  sh -c "$HOME/.config/bspwm/scripts/change_gap.sh 0"
+
+# set zero gap for all desktops
+alt + Tab
+  sh -c "$HOME/.config/bspwm/scripts/change_gap.sh 20"
 
 # window sticky
 super + g
