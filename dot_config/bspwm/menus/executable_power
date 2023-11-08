@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# generate a dynamic menu (dmenu) based on STDIN 
+# that every entry will be tokenized 
+DIALOG_RESULT=$(echo -e 'Lock\nLogout\nHibernate\nReboot\nPoweroff\nCancel' | rofi -dmenu -i -p "ACTION" -tokenize -lines 7 -eh 1 -width 25 -location 0 -xoffset 0 -yoffset 0 -padding 20 -disable-history)
+
+echo "This result is : $DIALOG_RESULT"
+sleep 1;
+
+if [ "$DIALOG_RESULT" = "Lock" ];
+then
+    sh -c "env  XSECURELOCK_SHOW_USERNAME=0 XSECURELOCK_SHOW_HOSTNAME=0 XSECURELOCK_PASSWORD_PROMPT=time_hex /usr/local/bin/xsecurelock" 
+elif [ "$DIALOG_RESULT" = "Logout" ];
+then
+    sh -c "bspc quit"
+elif [ "$DIALOG_RESULT" = "Hibernate" ];
+then
+    exec systemctl hibernate
+elif [ "$DIALOG_RESULT" = "Reboot" ];
+then
+    exec systemctl reboot
+elif [ "$DIALOG_RESULT" = "Poweroff" ];
+then
+    exec systemctl poweroff
+elif [ "$DIALOG_RESULT" = "Cancel" ];
+then
+    exit 0
+fi

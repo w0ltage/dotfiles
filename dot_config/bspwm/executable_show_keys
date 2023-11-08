@@ -1,0 +1,4 @@
+#! /bin/bash
+
+# show cheatsheet (in dmenu) based on hotkeys in ./sxhkd/sxhkdrc
+awk '/^[a-z]/ && last {print $0,"\t",last} {last=""} /^#/{last=$0}' ~/.config/bspwm/sxhkd/sxhkdrc | column -t -s $'\t' | rofi -dmenu -i -p "Cheatsheet " -markup-rows -no-show-icons -width 700 -lines 15 -yoffset 30 -font "ClearSansMedium 11"
