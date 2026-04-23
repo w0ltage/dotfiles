@@ -1,0 +1,276 @@
+#!/usr/bin/zsh
+
+claude-api() {
+  ANTHROPIC_BASE_URL=$PROXY_BASE_URL \
+  ANTHROPIC_API_KEY=$PROXY_API_KEY \
+  claude "$@"
+}
+
+proxy() {
+  (
+    export ANTHROPIC_BASE_URL=$PROXY_BASE_URL
+    export ANTHROPIC_API_KEY=$PROXY_API_KEY
+    eval "$@"
+  )
+}
+
+alias mocx="nono run --profile hts-agent-codex --allow-cwd --allow ../../ -- codex --dangerously-bypass-approvals-and-sandbox"
+
+alias timeout="$(which gtimeout)"
+alias sqlmap="uv run python $HOME/Armory/21.01\ Github/Persistent/Injections/sqlmap-dev/sqlmap.py"
+alias python="/opt/homebrew/bin/python3"
+alias snpx="nono run --profile npx-untrusted --allow-cwd -- npx"
+
+alias sbox="nono run --profile stable-claude-code --allow-cwd --"
+alias monocc="nono run --profile hts-agent --allow-cwd --allow ../../ -- claude --dangerously-skip-permissions"
+
+alias ccb='claude "$(pbpaste)"'
+alias ccd='nono run --profile stable-claude-code --allow-port 8080 --allow-cwd -- claude --dangerously-skip-permissions'
+alias ccdp='nono run --profile stable-claude-code --allow-port 8080 --allow-cwd -- claude --dangerously-skip-permissions "$(pbpaste)"'
+
+alias cchts='nono run --profile hts-agent --allow-cwd -- claude --dangerously-skip-permissions'
+
+alias ddd="docker compose down"
+alias ddb="docker compose up --build"
+
+alias sz="source $HOME/.zshrc"
+alias ez="$EDITOR $HOME/.zshrc"
+alias ea="$EDITOR $HOME/.alias_zsh"
+alias merge="xrdb -merge $HOME/.Xresources"
+alias xcolor="xrdb -query | grep"
+alias vga="lspci -k | grep -A 2 -E '(VGA|3D)'"
+alias upgrub="sudo grub-mkconfig -o /boot/grub/grub.cfg"
+alias iip="curl --max-time 10 -w '\n' http://eth0.me"
+alias e="eza"
+alias el="eza -l"
+alias ea="eza -la"
+
+alias dockershell="docker run --rm -i -t --entrypoint=/bin/bash"
+alias dockershellsh="docker run --rm -i -t --entrypoint=/bin/sh"
+alias ysoserial="java --add-opens=java.xml/com.sun.org.apache.xalan.internal.xsltc.trax=ALL-UNNAMED --add-opens=java.xml/com.sun.org.apache.xalan.internal.xsltc.runtime=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED -jar $HOME/weapons/Github/ysoserial/ysoserial-all.jar"
+
+function dockershellhere() {
+    dirname=${PWD##*/}
+    docker run --rm -it --entrypoint=/bin/bash -v "`pwd`":/${dirname} -w /${dirname} "$@"
+}
+function dockershellshhere() {
+    dirname=${PWD##*/}
+    docker run --rm -it --entrypoint=/bin/sh -v "`pwd`":/${dirname} -w /${dirname} "$@"
+}
+
+
+# fzf
+zzh() {
+  du -a ~/ | awk '{print $2}' | fzf | xargs -r $EDITOR
+}
+zz() {
+  du -a . | awk '{print $2}' | fzf | xargs -r $EDITOR
+}
+zzd() {
+  du -a $1 | awk '{print $2}' | fzf | xargs -r $EDITOR
+}
+zzb() {
+  find -H "/usr/bin" "$HOME/.bin" -executable -print | sed -e 's=.*/==g' | fzf | sh
+}
+
+
+# source-highlight dependencies
+hcat () {
+  /usr/bin/src-hilite-lesspipe.sh "$1" | less -m -N
+}
+ccat () {
+  cat "$1" | xsel -b -i
+}
+
+# pkg clean chroot manager
+lccm () {
+  sudo ccm "$1" &&
+  gpg --detach-sign *.pkg*
+}
+
+aget () {
+  git clone https://aur.archlinux.org/"$1".git
+  # curl -fO https://aur.archlinux.org/cgit/aur.git/snapshot/"$1".tar.gz
+  # tar -xvf $1.tar.gz
+  cd $1
+}
+
+# build and install pkg from aur
+# abuild () {
+#   cd /tmp 
+#   git clone https://aur.archlinux.org/"$1".git
+#   cd $1
+#   sudo pacman -Syyy
+#   makepkg -si 
+#   cd ~
+#   rm -rf /tmp/$1
+# }
+
+alias dir="dir --color=auto"
+alias vdir="vdir --color=auto"
+alias grep="grep --color=always"
+#alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
+
+alias ls="ls --color=auto"
+alias la="ls -alFh --color=auto"
+alias llp="stat -c '%A %a %n' {*,.*}"
+alias ll="ls -a --color=auto"
+alias l="ls -CF --color=auto"
+alias .l="dirs -v"
+alias lss="ls -sh | sort -h"
+alias duh="du -d 1 -h | sort -h"
+
+alias mk="mkdir"
+
+mkj () {
+  mkdir -p "$1"
+  cd "$1"
+}
+
+alias /="cd /"
+alias ~="cd ~"
+alias ..="cd .."
+alias ...="cd ../.."
+alias q="exit"
+alias й="exit"
+alias ghu="cd $HOME/Do/Github"
+
+# git related aliases
+function gc () {
+  git clone "$1"
+}
+
+function gcj () {
+  git clone "$1"
+  cd "$2"
+  # $EDITOR .
+}
+
+alias gi="git init"
+alias gs="git status"
+alias gl="git log --stat --pretty=oneline --graph --date=short"
+alias gg="gitg &"
+alias ga="git add --all"
+gac () {
+  git add --all
+  git commit -am "$1"
+}
+alias gr="git remote"
+alias gf="git fetch"
+alias gpl="git pull"
+alias gp="git push"
+alias gpm="git push origin master"
+alias ghab="$BROWSER http://github.com/ctlos &"
+# yarn global add github-search-repos-cli
+alias gsc="github-search-repos -i"
+
+alias rss="newsboat"
+
+# download web site
+wgetw () {
+  wget -rkx "$1"
+}
+
+iso () {
+  sudo dd bs=4M if="$1" of=/dev/"$2" status=progress && sync
+}
+
+alias -s {mp3,m4a,flac}="mpv"
+alias -s {png,jpg,tiff,bmp}="viewnior"
+# alias -s {conf,txt}="nvim"
+# alias {aurman,pikaur,trizen,yaourt}="yay"
+
+alias tm="tmux attach || tmux new -s work"
+alias tmd="tmux detach"
+alias tmk="tmux kill-server"
+alias fm="ranger"
+alias sfm="sudo ranger"
+alias th="thunar . &"
+alias sth="sudo thunar &"
+alias na="nautilus . &"
+alias sna="sudo nautilus &"
+alias h="htop"
+
+
+# systemd
+alias sse="sudo systemctl enable"
+alias ssd="sudo systemctl disable"
+alias ssen="sudo systemctl enable --now"
+alias ssdn="sudo systemctl disable --now"
+alias ssr="sudo systemctl restart"
+alias ssk="sudo systemctl stop"
+alias sss="sudo systemctl status"
+
+# Python
+alias ve="virtualenv ve"
+alias vea="source ve/bin/activate"
+alias ved="deactivate"
+alias pipr="pip install -r requirements.txt"
+
+# extract files from acrhive with any extension
+function extract {
+ if [ -z "$1" ]; then
+    # display usage if no parameters given
+    echo "Usage: ex <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+ else
+    if [ -f "$1" ] ; then
+        NAME=${1%.*}
+        #mkdir $NAME && cd $NAME
+        case "$1" in
+          *.tar.bz2)   tar xvjf ./"$1"    ;;
+          *.tar.gz)    tar xvzf ./"$1"    ;;
+          *.tar.xz)    tar xvJf ./"$1"    ;;
+          *.lzma)      unlzma ./"$1"      ;;
+          *.bz2)       bunzip2 ./"$1"     ;;
+          *.rar)       unrar x -ad ./"$1" ;;
+          *.gz)        gunzip ./"$1"      ;;
+          *.tar)       tar xvf ./"$1"     ;;
+          *.tbz2)      tar xvjf ./"$1"    ;;
+          *.tgz)       tar xvzf ./"$1"    ;;
+          *.zip)       unzip ./"$1"       ;;
+          *.Z)         uncompress ./"$1"  ;;
+          *.7z)        7z x ./"$1"        ;;
+          *.xz)        unxz ./"$1"        ;;
+          *.exe)       cabextract ./"$1"  ;;
+          *)           echo "ex: '$1' - Can't be extracted" ;;
+        esac
+    else
+        echo "'$1' - invalid file"
+    fi
+fi
+}
+
+# Put a file in archive.7z with pk command
+function pk () {
+  if [ $1 ] ; then
+    case $1 in
+      tbz)       tar cjvf $2.tar.bz2 $2      ;;
+      tgz)       tar czvf $2.tar.gz  $2       ;;
+      txz)       tar -caf $2.tar.xz  $2       ;;
+      tar)       tar cpvf $2.tar  $2       ;;
+      bz2)       bzip $2 ;;
+      gz)        gzip -c -9 -n $2 > $2.gz ;;
+      zip)       zip -r $2.zip $2   ;;
+      7z)        7z a $2.7z $2    ;;
+      *)         echo "'$1' Can't be archived by pk()" ;;
+    esac
+  else
+    echo "'$1' invalid file"
+  fi
+}
+
+# find biggest file
+alias biggest='sudo du -a / 2>/dev/null | sort -n -r | head -n 20'
+
+# clean metadata from file
+alias meta='mat2 --inplace'
+
+alias vi='vim'
+alias py='python3'
+alias inst='brew install'
+alias anki='anki --no-sandbox'
+# alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+
+alias emulator="$ANDROID_HOME/emulator/emulator"
