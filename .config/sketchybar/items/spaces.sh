@@ -8,6 +8,14 @@ source "$CONFIG_DIR/colors.sh"
 # Add the event if it doesn't exist (ignore error if it does)
 sketchybar --add event aerospace_workspace_change || true
 
+# Remove previously generated space items so stale items don't survive reloads.
+while IFS= read -r item; do
+  [ -n "$item" ] || continue
+  sketchybar --remove "$item" || true
+done < <(sketchybar --query bar 2>/dev/null | tr ',' '\n' | sed -n 's/.*"\(space\.[^"]*\)".*/\1/p')
+
+sketchybar --remove space_separator || true
+
 # ==== SPACE ITEM DEFINITIONS ====
 # Loop through monitors to get workspaces for each specific display
 for m in $(aerospace list-monitors --format %{monitor-id}); do
@@ -38,4 +46,3 @@ sketchybar --add item space_separator left \
            --subscribe space_separator space_windows_change aerospace_workspace_change
 
 # ==== UPDATE LOGIC ====
-

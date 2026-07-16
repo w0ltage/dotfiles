@@ -20,7 +20,7 @@ get_app_icon() {
   local app="$1"
 
   case "$app" in
-    "Alacritty"|"Ghostty"|"Hyper"|"iTerm2"|"kitty"|"Terminal"|"WezTerm")
+    "Alacritty"|"Hyper"|"iTerm2"|"kitty"|"Terminal"|"WezTerm")
       echo ":terminal:"
       ;;
     "Code"|"Code - Insiders")

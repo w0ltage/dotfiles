@@ -21,18 +21,9 @@ window_data=$(aerospace list-windows --all --format "%{workspace}|%{app-name}|%{
 # Create an array to store app lists per workspace (Bash 3.2 compatible - sparse array)
 # Note: This assumes workspace IDs are integers!
 workspace_apps=()
-workspace_has_ghostty=()
 
 while IFS='|' read -r sid app_name app_bundle_id; do
   if [ -n "$sid" ] && [ -n "$app_name" ]; then
-    if [ "$app_bundle_id" = "com.mitchellh.ghostty" ]; then
-      if [ "${workspace_has_ghostty[$sid]}" = "1" ]; then
-        continue
-      fi
-
-      workspace_has_ghostty[$sid]="1"
-    fi
-
     icon_map "$app_name"
     # Append icon to the workspace's entry (handling potential previous value)
     current_icons="${workspace_apps[$sid]}"

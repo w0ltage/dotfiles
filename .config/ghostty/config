@@ -1,0 +1,19 @@
+# cmux uses Ghostty terminal configuration.
+# Keep the cursor as a steady block with no blinking.
+cursor-style = block
+cursor-style-blink = false
+
+# Match the active WezTerm appearance as closely as Ghostty supports.
+font-family = "JetBrains Mono"
+font-size = 16
+
+background = 1d2021
+foreground = ebdbb2
+cursor-color = fabd2f
+cursor-text = 1d2021
+selection-background = fabd2f
+selection-foreground = 1d2021
+split-divider-color = fabd2f
+
+background-opacity = 1
+# Do not force a lower scrollback cap for cmux; use Ghostty's default.

@@ -6,29 +6,212 @@ claude-api() {
   claude "$@"
 }
 
-proxy() {
+pproxy() {
   (
-    export ANTHROPIC_BASE_URL=$PROXY_BASE_URL
-    export ANTHROPIC_API_KEY=$PROXY_API_KEY
+    export ANTHROPIC_DEFAULT_OPUS_MODEL=gpt-5.4(xhigh)
+    export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5.4(high)
+    export ANTHROPIC_DEFAULT_HAIKU_MODEL=gpt-5.4(medium)
+    export ANTHROPIC_BASE_URL="$HAO_PROXY_BASE_URL"
+    export ANTHROPIC_AUTH_TOKEN=$HAO_PROXY_API_KEY
     eval "$@"
   )
 }
 
-alias mocx="nono run --profile hts-agent-codex --allow-cwd --allow ../../ -- codex --dangerously-bypass-approvals-and-sandbox"
+proxy() {
+  (
+    export ANTHROPIC_BASE_URL="$HAO_PROXY_BASE_URL"
+    export ANTHROPIC_AUTH_TOKEN=$HAO_PROXY_API_KEY
+    eval "$@"
+  )
+}
+
+_nono_profile_for() {
+  emulate -L zsh
+
+  local family=$1
+  local agent=$2
+
+  case "${family}:${agent}" in
+    dev:claude) print -r -- "agent-claude-dev" ;;
+    dev:codex) print -r -- "agent-codex-dev" ;;
+    dev:pi) print -r -- "agent-pi-dev" ;;
+    dev:omp) print -r -- "agent-omp-dev" ;;
+    vex:claude) print -r -- "agent-claude-vex" ;;
+    vex:codex) print -r -- "agent-codex-vex" ;;
+    vex:pi) print -r -- "agent-pi-vex" ;;
+    vex:omp) print -r -- "agent-omp-vex" ;;
+    hts:claude) print -r -- "agent-claude-vex" ;;
+    hts:codex) print -r -- "agent-codex-vex" ;;
+    hts-online:claude) print -r -- "agent-claude-vex" ;;
+    hts-online:codex) print -r -- "agent-codex-vex" ;;
+    *)
+      print -u2 -- "Unknown nono family/agent pair: ${family} ${agent}"
+      return 1
+      ;;
+  esac
+}
+
+_nono_agent_exec() {
+  emulate -L zsh
+  setopt pipefail
+
+  local family=$1
+  local agent=$2
+  shift 2 || return 1
+
+  local profile
+  profile=$(_nono_profile_for "$family" "$agent") || return 1
+
+  local -a nono_args
+  local -a agent_args
+  local -a launch_prefix
+
+  nono_args=(run --profile "$profile" --allow-cwd)
+  while (( $# > 0 )); do
+    if [[ "$1" == "--" ]]; then
+      shift
+      break
+    fi
+
+    nono_args+=("$1")
+    shift
+  done
+
+  case "$agent" in
+    claude) agent_args=(claude --dangerously-skip-permissions) ;;
+    codex)
+      if [[ "$family" == "dev" ]]; then
+        agent_args=(
+          codex
+          --dangerously-bypass-approvals-and-sandbox
+          -c mcp_servers.caido.enabled=false
+          -c mcp_servers.collaborator.enabled=false
+          -c mcp_servers.rag.enabled=false
+        )
+      else
+        agent_args=(codex --dangerously-bypass-approvals-and-sandbox)
+      fi
+      launch_prefix=(
+        env
+        -u SSL_CERT_FILE
+        -u REQUESTS_CA_BUNDLE
+        -u CURL_CA_BUNDLE
+        -u NODE_EXTRA_CA_CERTS
+        -u PYTHONHTTPSVERIFY
+      )
+      ;;
+    pi) agent_args=("$HOME/.local/share/pnpm/bin/pi") ;;
+    omp) agent_args=(/opt/homebrew/bin/omp) ;;
+    *)
+      print -u2 -- "Unknown nono agent: ${agent}"
+      return 1
+      ;;
+  esac
+
+  if (( ${#launch_prefix[@]} > 0 )); then
+    "${launch_prefix[@]}" nono "${nono_args[@]}" -- "${agent_args[@]}" "$@"
+  else
+    nono "${nono_args[@]}" -- "${agent_args[@]}" "$@"
+  fi
+}
+
+nono-agent() {
+  _nono_agent_exec "$@"
+}
+
+ncx() {
+  _nono_agent_exec dev codex -- "$@"
+}
+
+vcx() {
+  _nono_agent_exec vex codex -- "$@"
+}
+
+npi() {
+  _nono_agent_exec dev pi -- "$@"
+}
+
+vpi() {
+  _nono_agent_exec vex pi -- "$@"
+}
+
+nomp() {
+  _nono_agent_exec dev omp -- "$@"
+}
+
+vomp() {
+  _nono_agent_exec vex omp -- "$@"
+}
+
+ncxo() {
+  _nono_agent_exec hts-online codex -- "$@"
+}
+
+mocx() {
+  _nono_agent_exec dev codex --allow ../../ -- "$@"
+}
+
+mocxo() {
+  _nono_agent_exec hts-online codex --allow ../../ -- "$@"
+}
+
+htcx() {
+  _nono_agent_exec hts codex -- "$@"
+}
+
+mohtcx() {
+  _nono_agent_exec hts codex --allow ../../ -- "$@"
+}
+
+kgsd() {
+  emulate -L zsh
+  local tmpbin exit_code
+  tmpbin=$(mktemp -d) || return 1
+  cat > "$tmpbin/claude" <<'SH'
+#!/bin/sh
+exit 127
+SH
+  chmod +x "$tmpbin/claude" || { rm -rf "$tmpbin"; return 1; }
+  [[ -n "$KGSD_WORKDIR" ]] || { print -u2 -- "KGSD_WORKDIR is required"; rm -rf "$tmpbin"; return 1; }
+  PATH="$tmpbin:$PATH" nono run --profile agent-gsd-pi --allow-cwd --allow "$KGSD_WORKDIR" -- mise x node@25 -- gsd "$@"
+  exit_code=$?
+  rm -rf "$tmpbin"
+  return $exit_code
+}
+
+ngsd() {
+  emulate -L zsh
+  local tmpbin exit_code
+  tmpbin=$(mktemp -d) || return 1
+  cat > "$tmpbin/claude" <<'SH'
+#!/bin/sh
+exit 127
+SH
+  chmod +x "$tmpbin/claude" || { rm -rf "$tmpbin"; return 1; }
+  PATH="$tmpbin:$PATH" nono run --profile agent-gsd-pi --allow-cwd -- mise x node@25 -- gsd "$@"
+  exit_code=$?
+  rm -rf "$tmpbin"
+  return $exit_code
+}
 
 alias timeout="$(which gtimeout)"
 alias sqlmap="uv run python $HOME/Armory/21.01\ Github/Persistent/Injections/sqlmap-dev/sqlmap.py"
 alias python="/opt/homebrew/bin/python3"
-alias snpx="nono run --profile npx-untrusted --allow-cwd -- npx"
+snpx() {
+  nono run --profile app-npx-untrusted --allow-cwd -- npx "$@"
+}
 
-alias sbox="nono run --profile stable-claude-code --allow-cwd --"
-alias monocc="nono run --profile hts-agent --allow-cwd --allow ../../ -- claude --dangerously-skip-permissions"
+sbox() {
+  nono run --profile agent-claude-dev --allow-cwd -- "$@"
+}
 
-alias ccb='claude "$(pbpaste)"'
-alias ccd='nono run --profile stable-claude-code --allow-port 8080 --allow-cwd -- claude --dangerously-skip-permissions'
-alias ccdp='nono run --profile stable-claude-code --allow-port 8080 --allow-cwd -- claude --dangerously-skip-permissions "$(pbpaste)"'
+ccd() {
+  _nono_agent_exec dev claude -- "$@"
+}
 
-alias cchts='nono run --profile hts-agent --allow-cwd -- claude --dangerously-skip-permissions'
+ccvex() {
+  _nono_agent_exec vex claude -- "$@"
+}
 
 alias ddd="docker compose down"
 alias ddb="docker compose up --build"

@@ -1,19 +1,15 @@
-# nvm default node version (for non-interactive shells like IDE agents)
-export NVM_DIR="$HOME/.config/nvm"
-if [ -s "$NVM_DIR/alias/default" ]; then
-  DEFAULT_NODE_VERSION=$(cat "$NVM_DIR/alias/default")
-  if [ "$DEFAULT_NODE_VERSION" = "node" ]; then
-    DEFAULT_NODE_VERSION="v24.4.1"  # or your preferred version
-  fi
-  export PATH="$NVM_DIR/versions/node/$DEFAULT_NODE_VERSION/bin:$PATH"
-fi
+ulimit -n 65536
 
 export PATH="/opt/homebrew/opt/curl/bin/:$PATH:$HOME/go/bin/:$HOME/.bin:$HOME/bin:$HOME/.config/rofi/scripts:$HOME/.local/bin:/usr/local/bin:$HOME/.local/kitty.app/bin:$HOME/bin:/usr/local/go/bin:$HOME/bin/:/usr/local/opt/openvpn/sbin/:$ANDROID_HOME/build-tools/36.1.0/:/opt/local/bin:$HOME/.cargo/bin:$HOME/.dotnet/tools"
+
+# setup android dev
+export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/36.0.0:$PATH"
 export ANDROID_HOME="$HOME/Library/Android/sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+
 export TERM="xterm-256color"
 export EDITOR="vim"
 # export BROWSER="/Applications/Arc.app/Contents/MacOS/Arc"
-export SSH_KEY_PATH="~/.ssh/dsa_id"
 export _JAVA_AWT_WM_NONREPARENTING=1
 export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
 export PIPX_HOME="$HOME/.local/pipx"

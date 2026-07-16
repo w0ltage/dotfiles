@@ -1,2 +1,23 @@
 automatic_backups
 .DS_Store
+*.zwc
+.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/build*
+
+# Local secrets and credentials
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*token*
+*secret*
+*credential*
+
+# Local histories and caches
+*_history
+.zsh_history
+
+# Local machine-specific sandbox/config state
+.config/nono/**

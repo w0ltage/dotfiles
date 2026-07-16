@@ -1,4 +1,3 @@
-# export SSLKEYLOGFILE=~/.ssl-key.log
 
 # Add deno completions to search path
 if [[ ":$FPATH:" != *":$HOME/.zsh/completions:"* ]]; then export FPATH="$HOME/.zsh/completions:$FPATH"; fi
@@ -46,10 +45,10 @@ zinit ice wait lucid atload"_zsh_autosuggest_start"
 zinit light zsh-users/zsh-autosuggestions  # autosuggestions
 
 # nvm lazy loading via zsh-nvm plugin
-export NVM_DIR="$HOME/.config/nvm"
-export NVM_LAZY_LOAD=true
-zinit ice wait lucid
-zinit light lukechilds/zsh-nvm
+# export NVM_DIR="$HOME/.config/nvm"
+# export NVM_LAZY_LOAD=true
+# zinit ice wait lucid
+# zinit light lukechilds/zsh-nvm
 
 # iterm2 integration check
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
@@ -101,14 +100,13 @@ fi
 # if [ -f "$HOME/yandex-cloud/completion.zsh.inc" ]; then source "$HOME/yandex-cloud/completion.zsh.inc"; fi
 
 
-# pnpm
+# pnpm start >>>
 export PNPM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-# pnpm end
-
+# <<< pnpm end
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -176,3 +174,16 @@ setopt NO_BEEP
 
 # claude
 export CLAUDE_CODE_NO_FLICKER=1
+eval "$(mise activate zsh)"
+
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:$HOME/.lmstudio/bin"
+# End of LM Studio CLI section
